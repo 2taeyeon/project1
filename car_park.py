@@ -2,7 +2,6 @@
 # 지역별로 나누고 광역시는 구로 나누어서 찾게하기
 # 다 선택하면 지도를 띄우고 핑찍어서 보이게 하기
 
-
 import pandas as pd
 import streamlit as st
 from streamlit_folium import folium_static
@@ -47,46 +46,103 @@ sido_sigungu_mapping = {
         "전체",
         "강남구",
         "강동구",
-        # ... 이하 생략 ...
+        "강북구",
+        "강서구",
+        "관악구",
+        "광진구",
+        "구로구",
+        "금천구",
+        "노원구",
+        "도봉구",
+        "동대문구",
+        "동작구",
+        "마포구",
+        "서대문구",
+        "서초구",
+        "성동구",
+        "성북구",
+        "송파구",
+        "양천구",
+        "영등포구",
+        "용산구",
+        "은평구",
+        "종로구",
+        "중구",
+        "중랑구",
     ],
     "인천광역시": [
         "전체",
         "계양구",
-        # ... 이하 생략 ...
+        "남동구",
+        "동구",
+        "미추홀구",
+        "부평구",
+        "서구",
+        "연수구",
+        "중구",
+        "옹진군",
+        "강화군",
     ],
     "대전광역시": [
         "전체",
+        "대덕구",
         "동구",
-        # ... 이하 생략 ...
+        "서구",
+        "유성구",
+        "중구",
     ],
     "대구광역시": [
         "전체",
+        "중구",
         "남구",
-        # ... 이하 생략 ...
+        "달서구",
+        "달성군",
+        "동구",
+        "북구",
+        "서구",
+        "수성구",
     ],
     "광주광역시": [
         "전체",
+        "광산구",
+        "남구",
         "동구",
-        # ... 이하 생략 ...
+        "북구",
+        "서구",
     ],
     "울산광역시": [
         "전체",
         "남구",
-        # ... 이하 생략 ...
+        "동구",
+        "북구",
+        "울주군",
+        "중구",
     ],
     "부산광역시": [
         "전체",
+        "강서구",
+        "금정구",
+        "기장군",
         "남구",
-        # ... 이하 생략 ...
+        "동구",
+        "동래구",
+        "부산진구",
+        "북구",
+        "사상구",
+        "사하구",
+        "서구",
+        "수영구",
+        "연제구",
+        "영도구",
+        "중구",
+        "해운대구",
     ],
 }
 
 
 def get_selected_district(selected_sido):
     if selected_sido in sido_sigungu_mapping:
-        return st.sidebar.selectbox(
-            "구", ["전체"] + sido_sigungu_mapping[selected_sido]
-        )
+        return st.sidebar.selectbox("구", sido_sigungu_mapping[selected_sido])
     else:
         return "전체"
 
@@ -111,7 +167,8 @@ filtered_data["소재지지번주소"].fillna("NaN", inplace=True)
 st.dataframe(filtered_data)
 
 # Folium Map 생성
-m = folium.Map(location=[35.8714, 128.6014], zoom_start=12)  # 초기 좌표를 대구로 설정
+m = folium.Map(location=[37.5665, 126.9780], zoom_start=12)  # 초기 좌표를 서울로 설정
+
 
 # 해당 구의 중심 좌표로 지도 이동
 if selected_district != "전체":
