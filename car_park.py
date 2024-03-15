@@ -2,6 +2,8 @@ import streamlit as st
 from streamlit_folium import folium_static
 from car_park_module import *
 
+st.subheader("전국 공영 주차장 찾아보기", divider="rainbow")
+st.sidebar.subheader("시도와 구를 선택해주세요", divider="blue")
 # 데이터 불러오기
 data = load_data()
 
