@@ -12,10 +12,9 @@ data = pd.read_csv("carpark.csv", encoding="euc-kr")
 
 # 소재지지번주소 컬럼에 대한 정제 작업 추가
 data["소재지지번주소"] = data["소재지지번주소"].str.strip()
-
+data["요금정보"] = data["요금정보"].str.strip()
 # NaN 값을 가진 행 제거
 data = data.dropna(subset=["위도", "경도"])
-
 
 sido_list = [
     "전체",
@@ -150,28 +149,40 @@ def get_selected_district(selected_sido):
 # 사용자가 선택한 '시도' 및 '구'에 해당하는 데이터를 필터링
 selected_sido = st.sidebar.selectbox("시도", sido_list)
 selected_district = get_selected_district(selected_sido)
+payment_options = ["전체", "유료", "무료"]
+selected_payment_option = st.sidebar.radio("유료/무료", payment_options)
 
-# 선택한 '시도'와 '구'에 해당하는 데이터를 DataFrame으로 표시
+# 요금정보에 따라 주차장 필터링
+if selected_payment_option == "전체":
+    filtered_data = data[data["요금정보"].notna()]
+elif selected_payment_option == "유료":
+    filtered_data = data[data["요금정보"].str.contains("유료|혼합", na=False)]
+else:  # "무료" 선택 시
+    filtered_data = data[data["요금정보"].str.contains("무료", na=False)]
+
+# 선택한 '시도' 및 '구'에 해당하는 데이터를 DataFrame으로 표시
 if selected_district == "전체":
-    filtered_data = data[data["소재지지번주소"].str.contains(selected_sido, na=False)]
+    filtered_data = filtered_data[
+        filtered_data["소재지지번주소"].str.contains(selected_sido, na=False)
+    ]
 else:
-    filtered_data = data[
-        data["소재지지번주소"].str.contains(
+    filtered_data = filtered_data[
+        filtered_data["소재지지번주소"].str.contains(
             f"{selected_sido} {selected_district}", na=False
         )
     ]
 
-filtered_data["소재지지번주소"].fillna("NaN", inplace=True)
-
-# 선택한 '시도' 및 '구'에 해당하는 데이터를 DataFrame으로 표시
+# DataFrame 출력
 st.dataframe(filtered_data)
 
 # Folium Map 생성
 m = folium.Map(location=[37.5665, 126.9780], zoom_start=12)  # 초기 좌표를 서울로 설정
 
-
 # 해당 구의 중심 좌표로 지도 이동
 if selected_district != "전체":
+    district_center = filtered_data[["위도", "경도"]].mean()
+    m.location = [district_center["위도"], district_center["경도"]]
+else:
     district_center = filtered_data[["위도", "경도"]].mean()
     m.location = [district_center["위도"], district_center["경도"]]
 
