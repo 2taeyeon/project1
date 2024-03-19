@@ -183,7 +183,7 @@ def create_map(filtered_data, select_gu):
         for _, row in filtered_data.iterrows():
             icon = folium.Icon(color="blue", icon="car", prefix="fa")  # 핑 아이콘 변경
             folium.Marker(
-                [row["위도"], row["경도"]], popup=row["소재지지번주소"], icon=icon
+                [row["위도"], row["경도"]], popup=row["주차장명"], icon=icon
             ).add_to(m)
 
     return m
